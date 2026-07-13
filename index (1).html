@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Weekly Ritual — Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --plum:#2A1B2C;
+    --plum-soft:#3E2740;
+    --pink:#E14F86;
+    --pink-deep:#C63A6E;
+    --blush:#FDEAF1;
+    --blush-deep:#F7D3E3;
+    --cream:#FFFDFB;
+    --ink:#241C24;
+    --muted:#9C7C90;
+    --gold:#D6A94A;
+    --line:#EED7E2;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--blush);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--pink);color:#fff;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:
+      radial-gradient(circle at 15% 20%, rgba(225,79,134,0.35), transparent 45%),
+      radial-gradient(circle at 85% 0%, rgba(214,169,74,0.18), transparent 40%),
+      var(--plum);
+    color:#fff;
+    padding:56px 6vw 40px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    inset:auto 0 0 0;
+    height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin:0 0 14px;
+  }
+  .hero h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(34px,6vw,58px);
+    line-height:1.02;
+    margin:0 0 10px;
+    letter-spacing:-0.01em;
+  }
+  .hero h1 em{
+    font-style:italic;
+    font-weight:400;
+    color:var(--pink);
+  }
+  .hero p.sub{
+    max-width:520px;
+    color:#D9C6D3;
+    font-size:15px;
+    line-height:1.6;
+    margin:0 0 34px;
+  }
+
+  .overview{
+    display:grid;
+    grid-template-columns:1.5fr 1fr;
+    gap:18px;
+    margin-top:8px;
+  }
+  @media(max-width:760px){ .overview{grid-template-columns:1fr;} }
+
+  .panel{
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:18px;
+    padding:22px 22px 18px;
+    backdrop-filter:blur(6px);
+  }
+  .panel-title{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:#C9B3C2;
+    margin:0 0 16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .panel-title span.big{
+    font-family:'Fraunces',serif;
+    font-size:22px;
+    color:#fff;
+    letter-spacing:0;
+    text-transform:none;
+  }
+
+  /* bar chart */
+  .bars{
+    display:flex;
+    align-items:flex-end;
+    gap:10px;
+    height:130px;
+  }
+  .bar-col{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    height:100%;
+    justify-content:flex-end;
+  }
+  .bar{
+    width:100%;
+    max-width:26px;
+    background:linear-gradient(180deg,var(--pink),var(--pink-deep));
+    border-radius:6px 6px 3px 3px;
+    transition:height .5s cubic-bezier(.4,0,.2,1);
+    min-height:4px;
+  }
+  .bar-label{
+    font-size:10px;
+    color:#C9B3C2;
+    letter-spacing:.05em;
+  }
+
+  .ring-wrap{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    height:130px;
+  }
+  .ring{
+    width:120px;height:120px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+    background:conic-gradient(var(--pink) calc(var(--pct)*1%), rgba(255,255,255,0.12) 0);
+    transition:background 0.5s;
+  }
+  .ring::before{
+    content:"";
+    position:absolute;
+    inset:10px;
+    border-radius:50%;
+    background:var(--plum-soft);
+  }
+  .ring-txt{
+    position:relative;
+    font-family:'Fraunces',serif;
+    font-size:26px;
+    font-weight:600;
+    color:#fff;
+  }
+  .ring-sub{
+    font-size:11px;
+    color:#C9B3C2;
+    text-align:center;
+    margin-top:6px;
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  /* ---------- DAY CARDS ---------- */
+  .section{
+    padding:44px 6vw;
+  }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .section-head h2{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:26px;
+    margin:0;
+    color:var(--ink);
+  }
+  .section-head .num{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    letter-spacing:.1em;
+    text-transform:uppercase;
+  }
+
+  .days-row{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+    gap:16px;
+  }
+  .day-card{
+    background:var(--cream);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:0 0 16px;
+    overflow:hidden;
+    box-shadow:0 2px 0 var(--line);
+  }
+  .day-head{
+    background:var(--plum);
+    color:#fff;
+    padding:14px 18px 12px;
+    position:relative;
+  }
+  .day-head .dname{
+    font-family:'Fraunces',serif;
+    font-size:19px;
+    font-weight:600;
+  }
+  .day-head .ddate{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--gold);
+    letter-spacing:.08em;
+    margin-top:2px;
+  }
+  .day-ring{
+    width:64px;height:64px;border-radius:50%;
+    margin:14px auto 6px;
+    display:flex;align-items:center;justify-content:center;
+    background:conic-gradient(var(--pink) calc(var(--pct)*1%), var(--blush-deep) 0);
+    transition:background .4s;
+  }
+  .day-ring::before{
+    content:"";
+    position:absolute;
+  }
+  .day-ring-inner{
+    width:48px;height:48px;border-radius:50%;
+    background:var(--cream);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:14px;
+    color:var(--pink-deep);
+  }
+  .day-tasks{
+    padding:2px 18px 0;
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+  }
+  .task{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-size:13px;
+    line-height:1.3;
+    cursor:pointer;
+    user-select:none;
+  }
+  .task input{
+    appearance:none;
+    width:16px;height:16px;
+    min-width:16px;
+    border:1.5px solid var(--pink);
+    border-radius:4px;
+    display:grid;
+    place-content:center;
+    cursor:pointer;
+    background:#fff;
+  }
+  .task input:checked{
+    background:var(--pink);
+  }
+  .task input:checked::after{
+    content:"";
+    width:5px;height:9px;
+    border:solid white;
+    border-width:0 2px 2px 0;
+    transform:rotate(45deg) translate(-1px,-1px);
+  }
+  .task span.txt{
+    transition:color .2s, opacity .2s;
+  }
+  .task input:checked ~ span.txt{
+    color:var(--muted);
+    text-decoration:line-through;
+    opacity:.7;
+  }
+  .add-task{
+    display:flex;
+    gap:6px;
+    margin-top:8px;
+    padding:0 2px;
+  }
+  .add-task input{
+    flex:1;
+    border:1px dashed var(--line);
+    border-radius:8px;
+    padding:6px 8px;
+    font-size:12px;
+    font-family:'Inter',sans-serif;
+    background:transparent;
+    color:var(--ink);
+  }
+  .add-task input:focus{outline:none;border-color:var(--pink);}
+  .add-task button{
+    border:none;
+    background:var(--blush-deep);
+    color:var(--pink-deep);
+    width:28px;height:28px;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .add-task button:hover{background:var(--pink);color:#fff;}
+
+  /* ---------- HABIT TRACKER ---------- */
+  .habit-section{
+    background:var(--plum);
+    color:#fff;
+  }
+  .habit-section .section-head h2{color:#fff;}
+  .habit-section .section-head .num{color:#C9B3C2;}
+
+  .habit-table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0 8px;
+    font-size:13px;
+  }
+  .habit-table thead th{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:#C9B3C2;
+    font-weight:500;
+    padding:0 8px 6px;
+    text-align:center;
+  }
+  .habit-table thead th:first-child{text-align:left;padding-left:4px;}
+  .habit-table tbody tr{
+    background:rgba(255,255,255,0.05);
+  }
+  .habit-table tbody td{
+    padding:11px 8px;
+    text-align:center;
+  }
+  .habit-table tbody td:first-child{
+    text-align:left;
+    padding-left:16px;
+    border-radius:10px 0 0 10px;
+    font-weight:500;
+    white-space:nowrap;
+  }
+  .habit-table tbody td:last-child{border-radius:0 10px 10px 0;}
+  .habit-table .hbox{
+    appearance:none;
+    width:18px;height:18px;
+    border:1.5px solid rgba(255,255,255,0.35);
+    border-radius:5px;
+    background:transparent;
+    cursor:pointer;
+    display:inline-grid;
+    place-content:center;
+  }
+  .habit-table .hbox:checked{
+    background:var(--pink);
+    border-color:var(--pink);
+  }
+  .habit-table .hbox:checked::after{
+    content:"";
+    width:5px;height:9px;
+    border:solid white;
+    border-width:0 2px 2px 0;
+    transform:rotate(45deg) translate(-1px,-1px);
+  }
+  .habit-progress{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    min-width:120px;
+  }
+  .habit-bar-track{
+    flex:1;
+    height:6px;
+    border-radius:4px;
+    background:rgba(255,255,255,0.12);
+    overflow:hidden;
+  }
+  .habit-bar-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--pink),var(--gold));
+    border-radius:4px;
+    transition:width .4s;
+  }
+  .habit-pct{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:#C9B3C2;
+    width:34px;
+    text-align:right;
+  }
+  .trophy{font-size:13px;}
+
+  .add-habit{
+    display:flex;
+    gap:8px;
+    margin-top:16px;
+  }
+  .add-habit input{
+    flex:1;
+    max-width:260px;
+    border:1px dashed rgba(255,255,255,0.25);
+    border-radius:8px;
+    padding:8px 10px;
+    background:transparent;
+    color:#fff;
+    font-size:13px;
+  }
+  .add-habit input::placeholder{color:#8B7286;}
+  .add-habit input:focus{outline:none;border-color:var(--pink);}
+  .add-habit button{
+    border:none;
+    background:var(--pink);
+    color:#fff;
+    padding:0 16px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .add-habit button:hover{background:var(--pink-deep);}
+
+  .table-scroll{overflow-x:auto;padding-bottom:4px;}
+
+  footer{
+    text-align:center;
+    padding:26px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    letter-spacing:.05em;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <p class="eyebrow">Tuần 01 · 29.12 – 04.01</p>
+  <h1>you have so much to do, <em>and no idea where to start.</em></h1>
+  <p class="sub">Vậy thì bắt đầu từ đây. Một trang duy nhất giữ toàn bộ việc cần làm, thói quen cần giữ, và tiến độ cả tuần — để bạn chỉ cần tích, không cần nhớ.</p>
+
+  <div class="overview">
+    <div class="panel">
+      <p class="panel-title">Overall progress <span class="big" id="weekPctLabel">0%</span></p>
+      <div class="bars" id="barsChart"></div>
+    </div>
+    <div class="panel">
+      <p class="panel-title">Tasks completed</p>
+      <div class="ring-wrap">
+        <div>
+          <div class="ring" id="overallRing" style="--pct:0">
+            <span class="ring-txt" id="overallRingTxt">0%</span>
+          </div>
+          <p class="ring-sub" id="overallRingSub">0 / 0 completed</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-head">
+    <h2>Ngày trong tuần</h2>
+    <span class="num" id="dayCountLabel">7 days</span>
+  </div>
+  <div class="days-row" id="daysRow"></div>
+</div>
+
+<div class="section habit-section">
+  <div class="section-head">
+    <h2>Habit tracker</h2>
+    <span class="num" id="habitCountLabel">habits</span>
+  </div>
+  <div class="table-scroll">
+    <table class="habit-table">
+      <thead>
+        <tr>
+          <th>Habit</th>
+          <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th>
+          <th>Progress</th>
+        </tr>
+      </thead>
+      <tbody id="habitBody"></tbody>
+    </table>
+  </div>
+  <div class="add-habit">
+    <input id="newHabitInput" type="text" placeholder="Thêm thói quen mới…">
+    <button onclick="addHabit()">Thêm</button>
+  </div>
+</div>
+
+<footer>THE WEEKLY RITUAL — made for people who plan in pink</footer>
+
+<script>
+const DAY_NAMES = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const DAY_SHORT = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const DAY_DATES = ["29.12.2025","30.12.2025","31.12.2025","01.01.2026","02.01.2026","03.01.2026","04.01.2026"];
+
+let week = [
+  {tasks:[["Plan the week",true],["Team meeting prep",true],["Laundry",true],["Grocery shopping",true],["Read 10 pages",true],["Water plants",false]]},
+  {tasks:[["Gym workout",true],["Reply to emails",true],["Meal prep",true],["Call mom",true],["Tidy desk",false],["Journal",false]]},
+  {tasks:[["Gym workout",true],["Project progress analysis",true],["Laundry",true],["Meet up with friends",true],["Create an IG story",true],["Research flight deals",true],["Therapy session",true]]},
+  {tasks:[["Meal preparation",true],["Grocery shopping",true],["Study for next week's exam",true],["Meet up with friends",true],["Create an IG story",true],["Research flight deals",true],["Delivery pickup",true]]},
+  {tasks:[["Yoga session",false],["Coffee with mentor",false],["Reply to emails",false],["Create an IG story",false],["Research flight deals",false],["Therapy session",false],["Delivery pickup",false]]},
+  {tasks:[["Pay electricity bill",false],["Grocery shopping",false],["Meet up with friends",false],["Bike trip",false],["Laundry",false]]},
+  {tasks:[["Learn SEO basics",false],["Bike trip",false],["Laundry",false],["Meet up with friends",false],["Meal prep",false],["Rest & recharge",false]]}
+];
+
+let habits = [
+  {name:"Wake up at 6:30", days:[true,true,true,true,true,true,true]},
+  {name:"Drink 2L of water", days:[true,true,true,true,true,true,true]},
+  {name:"Cold shower", days:[true,true,true,true,true,true,true]},
+  {name:"Gym", days:[true,true,true,true,true,true,true]},
+  {name:"Reading 10 pages", days:[true,true,true,true,false,false,false]},
+  {name:"Budget tracking", days:[false,false,false,false,false,false,false]},
+  {name:"Studying", days:[false,false,false,false,false,false,false]},
+  {name:"Stretching", days:[false,false,false,false,false,false,false]},
+  {name:"Meditation", days:[false,false,false,false,false,false,false]},
+  {name:"No vape", days:[false,false,false,false,false,false,false]}
+];
+
+function dayPct(d){
+  if(d.tasks.length===0) return 0;
+  const done = d.tasks.filter(t=>t[1]).length;
+  return Math.round((done/d.tasks.length)*100);
+}
+
+function renderBars(){
+  const wrap = document.getElementById('barsChart');
+  wrap.innerHTML = '';
+  week.forEach((d,i)=>{
+    const pct = dayPct(d);
+    const col = document.createElement('div');
+    col.className='bar-col';
+    col.innerHTML = `<div class="bar" style="height:${Math.max(pct,3)}%"></div><div class="bar-label">${DAY_SHORT[i]}</div>`;
+    wrap.appendChild(col);
+  });
+}
+
+function renderOverallRing(){
+  let totalDone=0, totalTasks=0;
+  week.forEach(d=>{ totalTasks+=d.tasks.length; totalDone+=d.tasks.filter(t=>t[1]).length; });
+  const pct = totalTasks? Math.round((totalDone/totalTasks)*100):0;
+  const ring = document.getElementById('overallRing');
+  ring.style.setProperty('--pct', pct);
+  document.getElementById('overallRingTxt').textContent = pct+'%';
+  document.getElementById('overallRingSub').textContent = `${totalDone} / ${totalTasks} completed`;
+  document.getElementById('weekPctLabel').textContent = pct+'%';
+}
+
+function renderDays(){
+  const row = document.getElementById('daysRow');
+  row.innerHTML='';
+  week.forEach((d,i)=>{
+    const pct = dayPct(d);
+    const card = document.createElement('div');
+    card.className='day-card';
+    let tasksHtml = d.tasks.map((t,ti)=>`
+      <label class="task">
+        <input type="checkbox" ${t[1]?'checked':''} onchange="toggleTask(${i},${ti})">
+        <span class="txt">${t[0]}</span>
+      </label>`).join('');
+    card.innerHTML = `
+      <div class="day-head">
+        <div class="dname">${DAY_NAMES[i]}</div>
+        <div class="ddate">${DAY_DATES[i]}</div>
+      </div>
+      <div class="day-ring" style="--pct:${pct}">
+        <div class="day-ring-inner">${pct}%</div>
+      </div>
+      <div class="day-tasks">
+        ${tasksHtml}
+        <div class="add-task">
+          <input type="text" placeholder="Thêm việc…" id="newTask${i}" onkeydown="if(event.key==='Enter')addTask(${i})">
+          <button onclick="addTask(${i})">+</button>
+        </div>
+      </div>
+    `;
+    row.appendChild(card);
+  });
+}
+
+function toggleTask(dayIdx, taskIdx){
+  week[dayIdx].tasks[taskIdx][1] = !week[dayIdx].tasks[taskIdx][1];
+  renderAll();
+}
+
+function addTask(dayIdx){
+  const input = document.getElementById('newTask'+dayIdx);
+  const val = input.value.trim();
+  if(!val) return;
+  week[dayIdx].tasks.push([val,false]);
+  renderAll();
+}
+
+function habitPct(h){
+  const done = h.days.filter(x=>x).length;
+  return Math.round((done/7)*100);
+}
+
+function renderHabits(){
+  const body = document.getElementById('habitBody');
+  body.innerHTML='';
+  habits.forEach((h,hi)=>{
+    const pct = habitPct(h);
+    const tr = document.createElement('tr');
+    let cells = h.days.map((v,di)=>`<td><input type="checkbox" class="hbox" ${v?'checked':''} onchange="toggleHabit(${hi},${di})"></td>`).join('');
+    tr.innerHTML = `
+      <td>${h.name}</td>
+      ${cells}
+      <td>
+        <div class="habit-progress">
+          <div class="habit-bar-track"><div class="habit-bar-fill" style="width:${pct}%"></div></div>
+          <span class="habit-pct">${pct}%</span>
+          ${pct===100?'<span class="trophy">🏆</span>':''}
+        </div>
+      </td>
+    `;
+    body.appendChild(tr);
+  });
+  document.getElementById('habitCountLabel').textContent = habits.length+' habits';
+}
+
+function toggleHabit(hi,di){
+  habits[hi].days[di] = !habits[hi].days[di];
+  renderHabits();
+}
+
+function addHabit(){
+  const input = document.getElementById('newHabitInput');
+  const val = input.value.trim();
+  if(!val) return;
+  habits.push({name:val, days:[false,false,false,false,false,false,false]});
+  input.value='';
+  renderHabits();
+}
+
+function renderAll(){
+  renderBars();
+  renderOverallRing();
+  renderDays();
+  renderHabits();
+}
+
+renderAll();
+</script>
+</body>
+</html>
